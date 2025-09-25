@@ -1,3 +1,5 @@
+import {getFuzzyMatchedCityNames} from "./apiService.js";
+
 class WeatherApp {
     constructor() {
         this.viewElements = {}
