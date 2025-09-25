@@ -1,4 +1,5 @@
 @import 'reset.css';
+
 body {
     font-family: "Lexend", sans-serif;
 }
@@ -30,6 +31,7 @@ main {
 }
 
 .weather-info__search-view {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -53,7 +55,39 @@ main {
     font-size: 100%;
     text-align: center;
 }
+.weather-info__search-input-wrapper{
+    position: relative;
+}
+.weather-info__search-view ul{
+    display: none;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    list-style: none;
+    padding:0;
+    border: 1px solid rgba(150,150,150,0.9);
+    border-radius: 10px;
+    z-index:2;
+    opacity: 0.9;
+}
+.weather-info__search-view li{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width:100%;
+    height: 40px;
+    padding: 5px 20px;
+    border-radius:10px;
+    background-color: white;
+}
+.weather-info__search-view li:hover{
+    background-color: ghostwhite;
+}
 
+.weather-info__search-view li>span{
+    font-size:75%;
+    color:gray;
+}
 .weather-info__search-view button {
     font-family: 'Lexend', sans-serif;
     padding: 10px;

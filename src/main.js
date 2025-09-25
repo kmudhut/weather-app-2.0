@@ -4,13 +4,36 @@ class WeatherApp {
     constructor() {
         this.viewElements = {}
         this.#bindHTMLElements();
+        this.viewElements["searchInput"].addEventListener('input', this.generateInputSearchSuggestionList.bind(this))
+
     }
-    #bindHTMLElements(){
+   #bindHTMLElements(){
         const listOfIds = [...document.querySelectorAll('[id]')].map((elem) => elem.id);
         for(const id of listOfIds){
             this.viewElements[id] = document.getElementById(id);
         }
-        console.log(this.viewElements);
+
+    }
+    async generateInputSearchSuggestionList() {
+        const inputValue = this.viewElements.searchInput.value;
+        const matchedCityNames = await getFuzzyMatchedCityNames(inputValue);
+        this.viewElements.searchInputSuggestionsList.innerHTML = "";
+        console.log(matchedCityNames);
+        for(let city of matchedCityNames){
+            let li = document.createElement("li");
+            let span = document.createElement("span");
+            span.innerText = city?.voivodeship;
+            li.innerText = city?.name;
+            li.appendChild(span);
+            li.dataset.cityName = city?.name;
+            li.dataset.lat = city?.lat;
+            li.dataset.lon = city?.lon;
+            li.addEventListener("click", (e) => {
+                this.viewElements.searchInput.value = e.target.dataset?.cityName;
+            })
+            this.viewElements?.searchInputSuggestionsList.append(li);
+        }
+        this.viewElements.searchInputSuggestionsList.style.display = "block";
     }
 }
 

@@ -15,8 +15,12 @@
 <main>
     <section id="mainContainer" class="weather-info">
         <div id="weatherSearchView" class="weather-info__search-view">
-            <label for="searchInput" >Check weather:</label>
-            <input id="searchInput" type="text">
+            <label for="searchInput">Check weather:</label>
+            <div class="weather-info__search-input-wrapper">
+                <input id="searchInput" type="text" autocomplete="off">
+                <ul id="searchInputSuggestionsList">
+                </ul>
+            </div>
             <button id="searchButton">Search</button>
         </div>
 
