@@ -1,6 +1,7 @@
 import {getFuzzyMatchedCityNames} from "./apiService.js";
 
 class WeatherApp {
+    #coordinatesToSearch = {lat:null, lon:null};
     constructor() {
         this.viewElements = {}
         this.#bindHTMLElements();
@@ -14,6 +15,7 @@ class WeatherApp {
         }
 
     }
+
     async generateInputSearchSuggestionList() {
         const inputValue = this.viewElements.searchInput.value;
         const matchedCityNames = await getFuzzyMatchedCityNames(inputValue);
@@ -28,8 +30,10 @@ class WeatherApp {
             li.dataset.cityName = city?.name;
             li.dataset.lat = city?.lat;
             li.dataset.lon = city?.lon;
+
             li.addEventListener("click", (e) => {
-                this.viewElements.searchInput.value = e.target.dataset?.cityName;
+                this.#coordinatesToSearch.lat = e.target?.dataset.lat;
+                this.#coordinatesToSearch.lon = e.target?.dataset.lon;
             })
             this.viewElements?.searchInputSuggestionsList.append(li);
         }
