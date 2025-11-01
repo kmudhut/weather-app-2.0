@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "animate.css": "^4.1.1",
+    "dotenv": "^17.2.3"
+  },
+  "type": "module",
+  "devDependencies": {
+    "vite": "^7.1.12"
+  },
+  "scripts": {
+    "dev": "vite --port 2138",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
