@@ -101,7 +101,7 @@ main {
     backdrop-filter:blur(5px);
     transition-property: background-color, border;
     transition: ease 0.2s;
-    -webkit-tap-highlight-color: rgba(220,220,220, 1);;
+    -webkit-tap-highlight-color: rgba(220,220,220, 1);
 }
 
 .weather-info__forecast-view {
@@ -115,8 +115,19 @@ main {
 }
 
 .weather-info__return-btn {
-    padding: 5px 25px;
-    border: 2px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border:none;
+    border-radius: 100px;
+    background-color:rgba(225, 225, 225, 0.5);
+    transition-property: background-color;
+    transition: ease 0.2s;
+    -webkit-tap-highlight-color: rgba(220,220,220, 1);
+}
+.material-symbols-outlined{
+    color: black;
 }
 
 @media only screen and (min-width: 375px) {
@@ -178,6 +189,13 @@ main {
     .weather-info__search-view button:active {
         border: 2px solid rgba(220,220,220, 1);
         background-color: rgba(220,220,220, 1);
+        transform: scale(0.9);
+    }
+    .weather-info__return-btn:hover {
+        background-color: rgba(220,220,220, 1);
+    }
+    .weather-info__return-btn:active{
+        background-color:white;
         transform: scale(0.9);
     }
 }

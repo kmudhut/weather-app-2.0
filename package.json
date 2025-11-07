@@ -8,7 +8,7 @@
     "vite": "^7.1.12"
   },
   "scripts": {
-    "dev": "vite --port 2138",
+    "dev": "vite --port 2138 --host",
     "build": "vite build",
     "preview": "vite preview"
   }
