@@ -3,7 +3,7 @@ export const getFuzzyMatchedCityNames =  (cityname) => {
         .then(res=>res.json())
         .then(({results:cities}) => {
            return cities.map(({name:name, latitude:lat, longitude:lon, admin1: voivodeship})=> ({name, lat, lon, voivodeship}));
-        });
+        })
 }
 
 export const getCurrentWeatherByCoordinates =  ({lat,lon}) => {
