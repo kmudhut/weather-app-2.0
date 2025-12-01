@@ -15,41 +15,28 @@ class WeatherApp {
             this.viewElements[id] = document.getElementById(id);
         }
     }
-
+    handleSearchWeather(){
+        if(this.#coordinatesToSearch.lon && this.#coordinatesToSearch.lat) {
+            this.viewElements["searchInput"].style.borderColor = "";
+            this.viewElements["searchInputErrorTooltip"].classList.remove("weather-info__error-tooltip--visible")
+            getCurrentWeatherByCoordinates(this.#coordinatesToSearch).then(data => {
+                this.displayWeatherInfo(data);
+            });
+        }
+        else{
+            this.viewElements["searchInput"].style.borderColor = "red";
+            this.viewElements["searchInputErrorTooltip"].innerText = "Wpisz nazwę miasta, a następnie wybierz je z listy.";
+            this.viewElements["searchInputErrorTooltip"].classList.add("weather-info__error-tooltip--visible")
+        }
+    }
     #setupListeners() {
         this.viewElements["searchInput"].addEventListener('input', this.generateInputSearchSuggestionList.bind(this));
         this.viewElements["searchInput"].addEventListener('keydown', (e) => {
             if (e.key === "Enter") {
-                if(this.#coordinatesToSearch.lon && this.#coordinatesToSearch.lat) {
-                    this.viewElements["searchInput"].style.borderColor = "";
-                    this.viewElements["searchInputErrorTooltip"].classList.remove("weather-info__error-tooltip--visible")
-                    getCurrentWeatherByCoordinates(this.#coordinatesToSearch).then(data => {
-                        this.displayWeatherInfo(data);
-                    });
-                }
-                else{
-                    this.viewElements["searchInput"].style.borderColor = "red";
-                    this.viewElements["searchInputErrorTooltip"].innerText = "Wpisz nazwę miasta, a następnie wybierz je z listy.";
-                    this.viewElements["searchInputErrorTooltip"].classList.add("weather-info__error-tooltip--visible")
-                }
+                this.handleSearchWeather()
             }
         });
-        this.viewElements["searchButton"].addEventListener('click', () => {
-            console.log(this.#coordinatesToSearch.lon && this.#coordinatesToSearch.lat);
-            if(this.#coordinatesToSearch.lon && this.#coordinatesToSearch.lat) {
-                this.viewElements["searchInput"].style.borderColor = "";
-                this.viewElements["searchInputErrorTooltip"].classList.remove("weather-info__error-tooltip--visible")
-                getCurrentWeatherByCoordinates(this.#coordinatesToSearch).then(data => {
-                    this.displayWeatherInfo(data);
-                });
-            }
-            else{
-                this.viewElements["searchInput"].style.borderColor = "red";
-                this.viewElements["searchInputErrorTooltip"].innerText = "Wpisz nazwę miasta, a następnie wybierz je z listy.";
-                this.viewElements["searchInputErrorTooltip"].classList.add("weather-info__error-tooltip--visible")
-            }
-        })
-
+        this.viewElements["searchButton"].addEventListener('click',this.handleSearchWeather.bind(this))
         this.viewElements["returnToSearchViewBtn"].addEventListener('click', () => {
             this.#coordinatesToSearch = {};
             this.viewElements["searchInput"].value = "";
@@ -92,6 +79,18 @@ class WeatherApp {
         this.viewElements["weatherHumidity"].innerText = `Humidity: ${data?.current?.humidity}%`;
     }
 
+    selectCity(city) {
+        this.#coordinatesToSearch.lat = city.lat;
+        this.#coordinatesToSearch.lon = city.lon;
+
+        this.viewElements["searchInput"].value = city.name;
+        this.viewElements["searchInput"].focus();
+
+        this.viewElements.searchInputSuggestionsList.style.display = "none";
+        this.viewElements["searchInputErrorTooltip"].classList.remove("weather-info__error-tooltip--visible");
+        this.viewElements["searchInput"].style.borderColor = "";
+    }
+
     async generateInputSearchSuggestionList() {
         this.#coordinatesToSearch = {lat: null, lon: null}
         const inputValue = this.viewElements.searchInput.value;
@@ -108,34 +107,22 @@ class WeatherApp {
         for (let city of matchedCityNames) {
             let li = document.createElement("li");
             let span = document.createElement("span");
+
             span.innerText = city?.voivodeship;
             li.innerText = city?.name;
             li.appendChild(span);
-            li.dataset.cityName = city?.name;
-            li.dataset.lat = city?.lat;
-            li.dataset.lon = city?.lon;
             li.setAttribute("tabindex", "0");
-            li.addEventListener("click", (e) => {
-                this.#coordinatesToSearch.lat = e.currentTarget?.dataset.lat;
-                this.#coordinatesToSearch.lon = e.currentTarget?.dataset.lon;
-                this.viewElements["searchInput"].value = e.currentTarget?.dataset.cityName;
-                this.viewElements["searchInput"].focus();
-                this.viewElements.searchInputSuggestionsList.style.display = "none";
-                this.viewElements["searchInputErrorTooltip"].classList.remove("weather-info__error-tooltip--visible")
-                this.viewElements["searchInput"].style.borderColor = "";
-            })
+
+            li.addEventListener("click", () => {
+                this.selectCity(city);
+            });
 
             li.addEventListener("keydown", (e) => {
                 if (e.key === 'Enter') {
-                    this.#coordinatesToSearch.lat = e.currentTarget?.dataset.lat;
-                    this.#coordinatesToSearch.lon = e.currentTarget?.dataset.lon;
-                    this.viewElements["searchInput"].value = e.currentTarget?.dataset.cityName;
-                    this.viewElements["searchInput"].focus();
-                    this.viewElements.searchInputSuggestionsList.style.display = "none";
-                    this.viewElements["searchInputErrorTooltip"].classList.remove("weather-info__error-tooltip--visible")
-                    this.viewElements["searchInput"].style.borderColor = "";
+                    this.selectCity(city);
                 }
-            })
+            });
+
             this.viewElements?.searchInputSuggestionsList.append(li);
         }
         this.viewElements.searchInputSuggestionsList.style.display = "block";
