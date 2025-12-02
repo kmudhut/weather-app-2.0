@@ -15,13 +15,23 @@ class WeatherApp {
             this.viewElements[id] = document.getElementById(id);
         }
     }
-    handleSearchWeather(){
+    async handleSearchWeather(){
         if(this.#coordinatesToSearch.lon && this.#coordinatesToSearch.lat) {
             this.viewElements["searchInput"].style.borderColor = "";
             this.viewElements["searchInputErrorTooltip"].classList.remove("weather-info__error-tooltip--visible")
-            getCurrentWeatherByCoordinates(this.#coordinatesToSearch).then(data => {
-                this.displayWeatherInfo(data);
-            });
+            try{
+                const data = await getCurrentWeatherByCoordinates(this.#coordinatesToSearch);
+                this.displayWeatherInfo(data)
+            }
+            catch(err){
+                if(err.type==="API_ERROR"){
+                    this.viewElements["searchInput"].style.borderColor = "red";
+                    this.viewElements["searchInputErrorTooltip"].innerText = "Wystąpił problem z API pogodowym. To nie twoja wina."
+                    this.viewElements["searchInputErrorTooltip"].classList.add("weather-info__error-tooltip--visible");
+                }
+                throw err;
+            }
+
         }
         else{
             this.viewElements["searchInput"].style.borderColor = "red";
@@ -30,7 +40,12 @@ class WeatherApp {
         }
     }
     #setupListeners() {
-        this.viewElements["searchInput"].addEventListener('input', this.generateInputSearchSuggestionList.bind(this));
+        this.viewElements["searchInput"].addEventListener('input', (e)=>{
+            if(e.currentTarget.value.length < 2){
+                this.viewElements["searchInputSuggestionsList"].style.display = "none";
+            }
+            else this.generateInputSearchSuggestionList()
+        });
         this.viewElements["searchInput"].addEventListener('keydown', (e) => {
             if (e.key === "Enter") {
                 this.handleSearchWeather()
@@ -99,6 +114,11 @@ class WeatherApp {
             matchedCityNames = await getFuzzyMatchedCityNames(inputValue);
         }
         catch(err){
+            if(err.type === "API_ERROR") {
+                this.viewElements["searchInput"].style.borderColor = "red";
+                this.viewElements["searchInputErrorTooltip"].innerHTML = "Wystąpił błąd API. To nie twoja wina."
+                this.viewElements["searchInputErrorTooltip"].classList.add("weather-info__error-tooltip--visible");
+            }
             this.viewElements.searchInputSuggestionsList.style.display = "none";
             return
         }
