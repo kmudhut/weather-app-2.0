@@ -17,7 +17,10 @@ class WeatherApp {
         }
     }
     async handleSearchCity(e){
-        console.log(this)
+        this.viewElements.searchInputSuggestionsList.style.display = "none";
+        this.viewElements["searchInputErrorTooltip"].classList.remove("weather-info__error-tooltip--visible");
+        this.viewElements["searchInput"].style.borderColor = "";
+
         if(e.currentTarget.value.length < 2){
             this.viewElements["searchInputSuggestionsList"].style.display = "none";
         }
@@ -104,10 +107,6 @@ class WeatherApp {
 
         this.viewElements["searchInput"].value = city.name;
         this.viewElements["searchInput"].focus();
-
-        this.viewElements.searchInputSuggestionsList.style.display = "none";
-        this.viewElements["searchInputErrorTooltip"].classList.remove("weather-info__error-tooltip--visible");
-        this.viewElements["searchInput"].style.borderColor = "";
     }
 
     async generateInputSearchSuggestionList() {
@@ -118,13 +117,20 @@ class WeatherApp {
             matchedCityNames = await getFuzzyMatchedCityNames(inputValue);
         }
         catch(err){
-            if(err.type === "API_ERROR") {
-                this.viewElements["searchInput"].style.borderColor = "red";
-                this.viewElements["searchInputErrorTooltip"].innerHTML = "Wystąpił błąd API. To nie twoja wina."
-                this.viewElements["searchInputErrorTooltip"].classList.add("weather-info__error-tooltip--visible");
+            this.viewElements["searchInput"].style.borderColor = "red";
+            this.viewElements["searchInputErrorTooltip"].classList.add("weather-info__error-tooltip--visible");
+            switch(err.type){
+                case "API_ERROR":
+                    this.viewElements["searchInputErrorTooltip"].innerHTML = "Wystąpił błąd API. To nie twoja wina.";
+                    break;
+                case "CITY_NOT_FOUND":
+                    this.viewElements["searchInputErrorTooltip"].innerHTML = "Nie odnaleziono takiego miasta.";
+                    break;
+                    default:
+                        this.viewElements["searchInputErrorTooltip"].innerHTML = "Wystąpił inny błąd.";
             }
             this.viewElements.searchInputSuggestionsList.style.display = "none";
-            return
+            return;
         }
 
         this.viewElements.searchInputSuggestionsList.innerHTML = "";
