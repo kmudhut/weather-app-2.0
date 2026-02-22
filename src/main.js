@@ -1,5 +1,5 @@
 import {getCurrentWeatherByCoordinates, getFuzzyMatchedCityNames} from "./apiService.js";
-import {throttled} from "./utils.js"
+import {debounced} from "./utils.js"
 
 class WeatherApp {
     #coordinatesToSearch = {lat: null, lon: null};
@@ -51,7 +51,7 @@ class WeatherApp {
         }
     }
     #setupListeners() {
-        const throttledHandleSearchCity = throttled(200, this.handleSearchCity.bind(this));
+        const throttledHandleSearchCity = debounced(200, this.handleSearchCity.bind(this));
         this.viewElements["searchInput"].addEventListener('input', throttledHandleSearchCity);
         this.viewElements["searchInput"].addEventListener('keydown', (e) => {
             if (e.key === "Enter") {
@@ -102,6 +102,7 @@ class WeatherApp {
     }
 
     selectCity(city) {
+        this.viewElements.searchInputSuggestionsList.style.display = "none";
         this.#coordinatesToSearch.lat = city.lat;
         this.#coordinatesToSearch.lon = city.lon;
 
