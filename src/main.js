@@ -21,7 +21,7 @@ class WeatherApp {
         this.viewElements["searchInputErrorTooltip"].classList.remove("weather-info__error-tooltip--visible");
         this.viewElements["searchInput"].style.borderColor = "";
 
-        if(e.currentTarget.value.length < 2){
+        if(this.viewElements.searchInput.value.length < 2){
             this.viewElements["searchInputSuggestionsList"].style.display = "none";
         }
         else this.generateInputSearchSuggestionList()
